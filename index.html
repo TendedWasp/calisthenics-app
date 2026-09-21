@@ -22,8 +22,6 @@
     function App() {
       const [timer, setTimer] = useState(0);
       const [isActive, setIsActive] = useState(false);
-      
-      // New state for selectors
       const [difficulty, setDifficulty] = useState('Intermediate');
       const [time, setTime] = useState(30);
 
@@ -43,22 +41,41 @@
         setIsActive(true);
       };
 
-      // Auto-generate routine based on user selections
       const getExercises = () => {
         let sets = 3;
         if (time === 15) sets = 2;
         if (time === 45) sets = 4;
 
-        const routine = [
-          { name: difficulty === 'Beginner' ? "Incline Push-ups" : difficulty === 'Advanced' ? "Decline Push-ups" : "Push-ups", sets, reps: difficulty === 'Beginner' ? "10-12" : "To near failure" },
-          { name: difficulty === 'Beginner' ? "Doorway Rows" : difficulty === 'Advanced' ? "Pull-ups" : "Pull-ups / Inverted Rows", sets, reps: difficulty === 'Beginner' ? "10-15" : "To near failure" },
-          { name: difficulty === 'Beginner' ? "Assisted Squats" : difficulty === 'Advanced' ? "Jump Squats" : "Air Squats", sets, reps: difficulty === 'Beginner' ? "10-15" : "15-20" },
-          { name: difficulty === 'Beginner' ? "Split Squats" : difficulty === 'Advanced' ? "Jumping Lunges" : "Reverse Lunges", sets, reps: difficulty === 'Beginner' ? "8-10 / leg" : "10-12 / leg" },
-          { name: difficulty === 'Beginner' ? "Knee Plank" : difficulty === 'Advanced' ? "Extended Plank" : "Forearm Plank", sets, reps: "To form break" },
-          { name: difficulty === 'Beginner' ? "Dead Bugs" : difficulty === 'Advanced' ? "Hollow Body Hold" : "Flutter Kicks", sets, reps: difficulty === 'Beginner' ? "30 seconds" : "30-45 seconds" }
-        ];
+        const exerciseData = {
+          Beginner: [
+            { name: "Incline Push-ups", desc: "Hands elevated on a counter or chair, lower chest to edge.", reps: "10-12" },
+            { name: "Doorway Rows", desc: "Hold a sturdy doorframe, lean back, pull chest to hands.", reps: "10-15" },
+            { name: "Assisted Squats", desc: "Hold a chair for balance, sit back and down.", reps: "10-15" },
+            { name: "Split Squats", desc: "Keep feet staggered, drop back knee straight down.", reps: "8-10 / leg" },
+            { name: "Knee Plank", desc: "Rest on forearms and knees, keep hips flat in a straight line.", reps: "To form break" },
+            { name: "Dead Bugs", desc: "Lie flat, arms up. Slowly lower opposite arm and leg to floor.", reps: "30 seconds" }
+          ],
+          Intermediate: [
+            { name: "Push-ups", desc: "Body straight, lower chest to floor, elbows tucked at 45°.", reps: "To near failure" },
+            { name: "Pull-ups / Inverted Rows", desc: "Pull chin over bar, or pull chest up to underneath a sturdy table.", reps: "To near failure" },
+            { name: "Air Squats", desc: "Sit back until hips are below knees, keep chest up.", reps: "15-20" },
+            { name: "Reverse Lunges", desc: "Step backward, drop back knee just above the floor.", reps: "10-12 / leg" },
+            { name: "Forearm Plank", desc: "Rest on forearms and toes, keep lower back completely flat.", reps: "To form break" },
+            { name: "Flutter Kicks", desc: "Lie on back, press lower back into floor, flutter straight legs.", reps: "30-45 seconds" }
+          ],
+          Advanced: [
+            { name: "Decline Push-ups", desc: "Feet elevated on a chair or couch, lower chest to floor.", reps: "To near failure" },
+            { name: "Pull-ups", desc: "Strict form, pull chin over bar, control the descent.", reps: "To near failure" },
+            { name: "Jump Squats", desc: "Squat down, explode upward, land softly to absorb impact.", reps: "15-20" },
+            { name: "Jumping Lunges", desc: "Lunge down, jump and switch legs in mid-air.", reps: "10-12 / leg" },
+            { name: "Extended Plank", desc: "Rest on hands walked out past shoulders, hold core tight.", reps: "To form break" },
+            { name: "Hollow Body Hold", desc: "Lower back glued to floor, arms and legs hovering off ground.", reps: "45-60 seconds" }
+          ]
+        };
 
-        // If time is really short, drop the last core exercise to save time
+        let routine = exerciseData[difficulty].map(ex => ({ ...ex, sets }));
+
+        // Drop the last core exercise if they only have 15 minutes
         if (time === 15) return routine.slice(0, 5);
         return routine;
       };
@@ -69,7 +86,6 @@
         <div className="max-w-md mx-auto p-4">
           <h1 className="text-2xl font-bold mb-6 text-center text-blue-400">Maintenance Routine</h1>
           
-          {/* Settings Section */}
           <div className="bg-gray-800 p-4 rounded-lg shadow mb-6">
             <div className="mb-4">
               <label className="block text-sm text-gray-400 mb-2">Difficulty</label>
@@ -102,7 +118,6 @@
             </div>
           </div>
 
-          {/* Warm-up Section */}
           <div className="bg-gray-800 p-4 rounded-lg shadow mb-6 border-l-4 border-yellow-500">
             <h2 className="text-xl font-semibold mb-2">Warm-up (5 mins)</h2>
             <ul className="list-disc list-inside text-gray-300 space-y-1 text-sm">
@@ -113,12 +128,13 @@
             </ul>
           </div>
 
-          {/* Workout Section */}
           <div key={difficulty + time} className="space-y-6">
             {exercises.map((ex, i) => (
               <div key={i} className="bg-gray-800 p-4 rounded-lg shadow">
-                <h2 className="text-xl font-semibold">{ex.name}</h2>
-                <p className="text-gray-400 text-sm mb-3">Target: {ex.reps}</p>
+                <h2 className="text-xl font-semibold mb-1">{ex.name}</h2>
+                <p className="text-gray-300 text-sm mb-3">{ex.desc}</p>
+                <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-4">Target: {ex.reps}</p>
+                
                 <div className="flex space-x-3">
                   {Array.from({ length: ex.sets }).map((_, setIdx) => {
                     const setNum = setIdx + 1;
@@ -138,7 +154,6 @@
             ))}
           </div>
 
-          {/* Sticky Timer */}
           <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 p-4">
             <div className="max-w-md mx-auto flex items-center justify-between">
               <div className={`text-xl font-mono ${isActive ? 'text-green-400' : 'text-blue-400'}`}>
