@@ -7,15 +7,9 @@
   "theme_color": "#1f2937",
   "icons": [
     {
-      "src": "https://via.placeholder.com/192.png/1f2937/60a5fa?text=W",
-      "sizes": "192x192",
+      "src": "./3725272-200.png",
+      "sizes": "200x200",
       "type": "image/png"
-    },
-    {
-      "src": "https://via.placeholder.com/512.png/1f2937/60a5fa?text=W",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    },    
   ]
 }
