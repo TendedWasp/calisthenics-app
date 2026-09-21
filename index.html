@@ -7,10 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Maintenance</title>
-  
-  <!-- This links to the new manifest file -->
   <link rel="manifest" href="./manifest.json">
-  
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -25,6 +22,10 @@
     function App() {
       const [timer, setTimer] = useState(0);
       const [isActive, setIsActive] = useState(false);
+      
+      // New state for selectors
+      const [difficulty, setDifficulty] = useState('Intermediate');
+      const [time, setTime] = useState(30);
 
       useEffect(() => {
         let interval = null;
@@ -42,25 +43,85 @@
         setIsActive(true);
       };
 
-      const exercises = [
-        { name: "Push-ups", sets: 3, reps: "To failure" },
-        { name: "Pull-ups / Inverted Rows", sets: 3, reps: "To near failure" },
-        { name: "Air Squats", sets: 3, reps: "15-20" },
-        { name: "Reverse Lunges", sets: 3, reps: "10-12 / leg" },
-        { name: "Forearm Plank", sets: 3, reps: "To form break" },
-        { name: "Flutter Kicks", sets: 3, reps: "30-45 seconds" }
-      ];
+      // Auto-generate routine based on user selections
+      const getExercises = () => {
+        let sets = 3;
+        if (time === 15) sets = 2;
+        if (time === 45) sets = 4;
+
+        const routine = [
+          { name: difficulty === 'Beginner' ? "Incline Push-ups" : difficulty === 'Advanced' ? "Decline Push-ups" : "Push-ups", sets, reps: difficulty === 'Beginner' ? "10-12" : "To near failure" },
+          { name: difficulty === 'Beginner' ? "Doorway Rows" : difficulty === 'Advanced' ? "Pull-ups" : "Pull-ups / Inverted Rows", sets, reps: difficulty === 'Beginner' ? "10-15" : "To near failure" },
+          { name: difficulty === 'Beginner' ? "Assisted Squats" : difficulty === 'Advanced' ? "Jump Squats" : "Air Squats", sets, reps: difficulty === 'Beginner' ? "10-15" : "15-20" },
+          { name: difficulty === 'Beginner' ? "Split Squats" : difficulty === 'Advanced' ? "Jumping Lunges" : "Reverse Lunges", sets, reps: difficulty === 'Beginner' ? "8-10 / leg" : "10-12 / leg" },
+          { name: difficulty === 'Beginner' ? "Knee Plank" : difficulty === 'Advanced' ? "Extended Plank" : "Forearm Plank", sets, reps: "To form break" },
+          { name: difficulty === 'Beginner' ? "Dead Bugs" : difficulty === 'Advanced' ? "Hollow Body Hold" : "Flutter Kicks", sets, reps: difficulty === 'Beginner' ? "30 seconds" : "30-45 seconds" }
+        ];
+
+        // If time is really short, drop the last core exercise to save time
+        if (time === 15) return routine.slice(0, 5);
+        return routine;
+      };
+
+      const exercises = getExercises();
 
       return (
         <div className="max-w-md mx-auto p-4">
           <h1 className="text-2xl font-bold mb-6 text-center text-blue-400">Maintenance Routine</h1>
-          <div className="space-y-6">
+          
+          {/* Settings Section */}
+          <div className="bg-gray-800 p-4 rounded-lg shadow mb-6">
+            <div className="mb-4">
+              <label className="block text-sm text-gray-400 mb-2">Difficulty</label>
+              <div className="flex space-x-2">
+                {['Beginner', 'Intermediate', 'Advanced'].map(lvl => (
+                  <button 
+                    key={lvl} 
+                    onClick={() => setDifficulty(lvl)} 
+                    className={`flex-1 py-2 rounded-md text-sm font-bold transition-colors ${difficulty === lvl ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
+                  >
+                    {lvl}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">Time Available</label>
+              <div className="flex space-x-2">
+                {[15, 30, 45].map(t => (
+                  <button 
+                    key={t} 
+                    onClick={() => setTime(t)} 
+                    className={`flex-1 py-2 rounded-md text-sm font-bold transition-colors ${time === t ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
+                  >
+                    {t} min
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Warm-up Section */}
+          <div className="bg-gray-800 p-4 rounded-lg shadow mb-6 border-l-4 border-yellow-500">
+            <h2 className="text-xl font-semibold mb-2">Warm-up (5 mins)</h2>
+            <ul className="list-disc list-inside text-gray-300 space-y-1 text-sm">
+              <li>Arm Circles (30s forward & back)</li>
+              <li>Torso Twists (30s)</li>
+              <li>Leg Swings (10 per leg)</li>
+              <li>Deep Squat Hold (30s)</li>
+            </ul>
+          </div>
+
+          {/* Workout Section */}
+          <div key={difficulty + time} className="space-y-6">
             {exercises.map((ex, i) => (
               <div key={i} className="bg-gray-800 p-4 rounded-lg shadow">
                 <h2 className="text-xl font-semibold">{ex.name}</h2>
                 <p className="text-gray-400 text-sm mb-3">Target: {ex.reps}</p>
                 <div className="flex space-x-3">
-                  {[1, 2, 3].map(setNum => {
+                  {Array.from({ length: ex.sets }).map((_, setIdx) => {
+                    const setNum = setIdx + 1;
                     const [done, setDone] = useState(false);
                     return (
                       <button 
@@ -77,9 +138,10 @@
             ))}
           </div>
 
+          {/* Sticky Timer */}
           <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 p-4">
             <div className="max-w-md mx-auto flex items-center justify-between">
-              <div className="text-xl font-mono text-blue-400">
+              <div className={`text-xl font-mono ${isActive ? 'text-green-400' : 'text-blue-400'}`}>
                 {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
               </div>
               <div className="space-x-2">
@@ -97,7 +159,6 @@
     root.render(<App />);
   </script>
 
-  <!-- This registers the offline service worker -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js');
