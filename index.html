@@ -13,13 +13,12 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-white antialiased pb-24">
+<body class="bg-gray-900 text-white antialiased pb-36">
   <div id="root"></div>
 
   <script type="text/babel">
     const { useState, useEffect } = React;
 
-    // We pulled the button out into its own component so it manages its own memory safely
     function SetButton({ setNum }) {
       const [done, setDone] = useState(false);
       return (
@@ -140,7 +139,6 @@
             </ul>
           </div>
 
-          {/* The key property here forces React to wipe all checkboxes clean when you change difficulty or time */}
           <div key={difficulty + time} className="space-y-6">
             {exercises.map((ex, i) => (
               <div key={i} className="bg-gray-800 p-4 rounded-lg shadow">
@@ -157,15 +155,32 @@
             ))}
           </div>
 
-          <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 p-4">
-            <div className="max-w-md mx-auto flex items-center justify-between">
-              <div className={`text-xl font-mono ${isActive ? 'text-green-400' : 'text-blue-400'}`}>
-                {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
+          {/* Redesigned Rest Timer */}
+          <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 p-4 pb-6">
+            <div className="max-w-md mx-auto flex flex-col space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="text-gray-300 font-semibold flex items-center">
+                  Rest Timer: 
+                  <span className={`ml-3 text-2xl font-mono ${isActive ? 'text-green-400' : 'text-blue-400'}`}>
+                    {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
+                  </span>
+                </div>
+                <button onClick={() => { setTimer(0); setIsActive(false); }} className="px-4 py-2 bg-red-500/10 text-red-400 rounded-md font-bold active:bg-red-500/20">Stop</button>
               </div>
-              <div className="space-x-2">
-                <button onClick={() => startTimer(60)} className="px-4 py-2 bg-gray-800 rounded-md active:bg-gray-700">+60s</button>
-                <button onClick={() => startTimer(90)} className="px-4 py-2 bg-gray-800 rounded-md active:bg-gray-700">+90s</button>
-                <button onClick={() => { setTimer(0); setIsActive(false); }} className="px-4 py-2 text-red-400">Stop</button>
+              
+              <div className="flex space-x-2">
+                <button onClick={() => startTimer(120)} className="flex-1 py-2 bg-gray-800 rounded-md active:bg-gray-700 flex flex-col items-center justify-center text-center">
+                  <span className="text-[10px] sm:text-xs font-bold text-gray-200 uppercase tracking-wider">Pure Strength</span>
+                  <span className="text-sm font-mono text-blue-400 mt-1">2m</span>
+                </button>
+                <button onClick={() => startTimer(60)} className="flex-1 py-2 bg-gray-800 rounded-md active:bg-gray-700 flex flex-col items-center justify-center text-center">
+                  <span className="text-[10px] sm:text-xs font-bold text-gray-200 uppercase tracking-wider">Gen. Fitness</span>
+                  <span className="text-sm font-mono text-blue-400 mt-1">60s</span>
+                </button>
+                <button onClick={() => startTimer(30)} className="flex-1 py-2 bg-gray-800 rounded-md active:bg-gray-700 flex flex-col items-center justify-center text-center">
+                  <span className="text-[10px] sm:text-xs font-bold text-gray-200 uppercase tracking-wider">Fat Loss</span>
+                  <span className="text-sm font-mono text-blue-400 mt-1">30s</span>
+                </button>
               </div>
             </div>
           </div>
