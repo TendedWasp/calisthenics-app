@@ -13,4 +13,19 @@
       "purpose": "any maskable"
     }
   ]
+  "screenshots": [
+    {
+      "src": "./wide.png",
+      "sizes": "1901x992",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Desktop view"
+    },
+    {
+      "src": "./narrow.png",
+      "sizes": "458x971",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile view"
+    }
 }
