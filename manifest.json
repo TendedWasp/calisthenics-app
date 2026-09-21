@@ -1,18 +1,18 @@
 {
   "name": "Maintenance Workout",
   "short_name": "Workout",
-  "start_url": ".",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#1f2937",
   "theme_color": "#1f2937",
   "icons": [
     {
-      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Dumbbell_icon.svg/512px-Dumbbell_icon.svg.png",
+      "src": "https://via.placeholder.com/192.png/1f2937/60a5fa?text=W",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Dumbbell_icon.svg/512px-Dumbbell_icon.svg.png",
+      "src": "https://via.placeholder.com/512.png/1f2937/60a5fa?text=W",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
