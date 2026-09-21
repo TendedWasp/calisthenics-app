@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1f2937">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Maintenance Workout</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white antialiased pb-24">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function App() {
+      const [timer, setTimer] = useState(0);
+      const [isActive, setIsActive] = useState(false);
+
+      useEffect(() => {
+        let interval = null;
+        if (isActive && timer > 0) {
+          interval = setInterval(() => setTimer(t => t - 1), 1000);
+        } else if (timer === 0) {
+          setIsActive(false);
+          clearInterval(interval);
+        }
+        return () => clearInterval(interval);
+      }, [isActive, timer]);
+
+      const startTimer = (seconds) => {
+        setTimer(seconds);
+        setIsActive(true);
+      };
+
+      const exercises = [
+        { name: "Push-ups", sets: 3, reps: "To failure" },
+        { name: "Pull-ups / Inverted Rows", sets: 3, reps: "To near failure" },
+        { name: "Air Squats", sets: 3, reps: "15-20" },
+        { name: "Reverse Lunges", sets: 3, reps: "10-12 / leg" },
+        { name: "Forearm Plank", sets: 3, reps: "To form break" },
+        { name: "Flutter Kicks", sets: 3, reps: "30-45 seconds" }
+      ];
+
+      return (
+        <div className="max-w-md mx-auto p-4">
+          <h1 className="text-2xl font-bold mb-6 text-center text-blue-400">Maintenance Routine</h1>
+          
+          <div className="space-y-6">
+            {exercises.map((ex, i) => (
+              <div key={i} className="bg-gray-800 p-4 rounded-lg shadow">
+                <h2 className="text-xl font-semibold">{ex.name}</h2>
+                <p className="text-gray-400 text-sm mb-3">Target: {ex.reps}</p>
+                <div className="flex space-x-3">
+                  {[1, 2, 3].map(setNum => {
+                    const [done, setDone] = useState(false);
+                    return (
+                      <button 
+                        key={setNum}
+                        onClick={() => setDone(!done)}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-colors ${done ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
+                      >
+                        S{setNum}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 p-4 safe-area-pb">
+            <div className="max-w-md mx-auto flex items-center justify-between">
+              <div className="text-xl font-mono text-blue-400">
+                {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
+              </div>
+              <div className="space-x-2">
+                <button onClick={() => startTimer(60)} className="px-4 py-2 bg-gray-800 rounded-md active:bg-gray-700">+60s</button>
+                <button onClick={() => startTimer(90)} className="px-4 py-2 bg-gray-800 rounded-md active:bg-gray-700">+90s</button>
+                <button onClick={() => { setTimer(0); setIsActive(false); }} className="px-4 py-2 text-red-400">Stop</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
