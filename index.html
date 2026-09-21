@@ -19,6 +19,19 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
 
+    // We pulled the button out into its own component so it manages its own memory safely
+    function SetButton({ setNum }) {
+      const [done, setDone] = useState(false);
+      return (
+        <button 
+          onClick={() => setDone(!done)}
+          className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-colors ${done ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
+        >
+          S{setNum}
+        </button>
+      );
+    }
+
     function App() {
       const [timer, setTimer] = useState(0);
       const [isActive, setIsActive] = useState(false);
@@ -75,7 +88,6 @@
 
         let routine = exerciseData[difficulty].map(ex => ({ ...ex, sets }));
 
-        // Drop the last core exercise if they only have 15 minutes
         if (time === 15) return routine.slice(0, 5);
         return routine;
       };
@@ -128,6 +140,7 @@
             </ul>
           </div>
 
+          {/* The key property here forces React to wipe all checkboxes clean when you change difficulty or time */}
           <div key={difficulty + time} className="space-y-6">
             {exercises.map((ex, i) => (
               <div key={i} className="bg-gray-800 p-4 rounded-lg shadow">
@@ -136,19 +149,9 @@
                 <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-4">Target: {ex.reps}</p>
                 
                 <div className="flex space-x-3">
-                  {Array.from({ length: ex.sets }).map((_, setIdx) => {
-                    const setNum = setIdx + 1;
-                    const [done, setDone] = useState(false);
-                    return (
-                      <button 
-                        key={setNum}
-                        onClick={() => setDone(!done)}
-                        className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-colors ${done ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-                      >
-                        S{setNum}
-                      </button>
-                    );
-                  })}
+                  {Array.from({ length: ex.sets }).map((_, setIdx) => (
+                    <SetButton key={setIdx} setNum={setIdx + 1} />
+                  ))}
                 </div>
               </div>
             ))}
